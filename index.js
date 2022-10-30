@@ -5,6 +5,7 @@ const connectButton = document.getElementById("connectButton")
 const withdrawButton = document.getElementById("withdrawButton")
 const fundButton = document.getElementById("fundButton")
 const balanceButton = document.getElementById("balanceButton")
+const debug = document.getElementById("debug")
 connectButton.onclick = connect
 withdrawButton.onclick = withdraw
 fundButton.onclick = fund
@@ -18,8 +19,10 @@ async function connect() {
       console.log(error)
     }
     connectButton.innerHTML = "Connected"
+    debug.innerHTML+=" <br> "+ "What a genius you are fucking Connected"
     const accounts = await ethereum.request({ method: "eth_accounts" })
     console.log(accounts)
+    debug.innerHTML+=" <br> "+accounts
   } else {
     connectButton.innerHTML = "Please install MetaMask"
   }
@@ -27,6 +30,7 @@ async function connect() {
 
 async function withdraw() {
   console.log(`Withdrawing...`)
+  debug.innerHTML+=" <br> "+"Withdrawing"
   if (typeof window.ethereum !== "undefined") {
     const provider = new ethers.providers.Web3Provider(window.ethereum)
     await provider.send('eth_requestAccounts', [])
@@ -38,9 +42,11 @@ async function withdraw() {
       // await transactionResponse.wait(1)
     } catch (error) {
       console.log(error)
+      debug.innerHTML+=" <br> "+error
     }
   } else {
     withdrawButton.innerHTML = "Please install MetaMask"
+    debug.innerHTML+=" <br> "+"Please install MetaMask"
   }
 }
 
@@ -58,9 +64,11 @@ async function fund() {
       await listenForTransactionMine(transactionResponse, provider)
     } catch (error) {
       console.log(error)
+      debug.innerHTML+=" <br> "+error
     }
   } else {
     fundButton.innerHTML = "Please install MetaMask"
+    debug.innerHTML+=" <br> "+"Please install MetaMask"
   }
 }
 
@@ -70,11 +78,14 @@ async function getBalance() {
     try {
       const balance = await provider.getBalance(contractAddress)
       console.log(ethers.utils.formatEther(balance))
+      debug.innerHTML+=" <br> "+ethers.utils.formatEther(balance)
     } catch (error) {
       console.log(error)
+      debug.innerHTML+=" <br> "+error
     }
   } else {
     balanceButton.innerHTML = "Please install MetaMask"
+    debug.innerHTML+=" <br> "+"Please install MetaMask"
   }
 }
 
@@ -86,6 +97,7 @@ function listenForTransactionMine(transactionResponse, provider) {
                 console.log(
                     `Completed with ${transactionReceipt.confirmations} confirmations. `
                 )
+                debug.innerHTML+=" <br> "+ `Completed with ${transactionReceipt.confirmations} confirmations. `
                 resolve()
             })
         } catch (error) {
